@@ -2,8 +2,8 @@
 package algorithms_test
 
 import (
-	"algorithms"
 	"fmt"
+	"gosubject/algorithms"
 	"testing"
 )
 
