@@ -14,12 +14,11 @@ func Loop(n int) int {
 	if n < 2 {
 		return n
 	}
-
-	index := 0
+	index := 1
 	for n >= 2 {
-		array[index%2] = array[0] + array[1]
+		index = 1 &^ index
+		array[index] = array[0] + array[1]
 		n--
-		index++
 	}
-	return array[(index-1)%2]
+	return array[index]
 }
