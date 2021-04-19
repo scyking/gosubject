@@ -149,6 +149,7 @@ func Heap(arr IntSlice) {
 
 	length := arr.Len()
 
+	// 循环将堆首位（最大值）与末位交换，然后再重新调整最大堆
 	for i := length - 1; i > 0; i-- {
 		arr.Swap(0, i)
 		heapify(arr, 0, length-(length-i))
@@ -157,7 +158,8 @@ func Heap(arr IntSlice) {
 
 func buildMaxHeap(arr []int) {
 	length := len(arr)
-	for i := length >> 1; i >= 0; i++ {
+	// 从最后一个非叶子节点开始向上构造最大堆
+	for i := length>>1 - 1; i >= 0; i-- {
 		heapify(arr, i, length)
 	}
 }
@@ -168,62 +170,137 @@ func heapify(arr IntSlice, i, length int) {
 	right := i<<1 + 2
 	largest := i
 
+	// 如果有左子树，且左子树大于父节点，则将最大指针指向左子树
 	if left < length && arr.Less(largest, left) {
 		largest = left
 	}
 
+	// 如果有右子树，且右子树大于父节点，则将最大指针指向右子树
 	if right < length && arr.Less(largest, right) {
 		largest = right
 	}
 
+	// 如果父节点不是最大值，则将父节点与最大值交换，并且递归调整与父节点交换的位置。
 	if largest != i {
 		arr.Swap(i, largest)
 		heapify(arr, largest, length)
 	}
 }
 
-func Counting(arr []int, mv int) {
-	//bucket := make([]int, mv+1)
-	//index := 0
-	//aLen := len(arr)
-	//bLen := mv + 1
-	//
-	//for i := 0; i < aLen; i++ {
-	//	if bucket[arr[i]] > 0 {
-	//		bucket[arr[i]] = 0
-	//	}
-	//	bucket[arr[i]]++
-	//}
-	//
-	//for j := 0; j < bLen; j++ {
-	//	for bucket[j] > 0 {
-	//		arr[index] = j
-	//		bucket[j]--
-	//	}
-	//}
+func Counting(arr []int) {
+	if len(arr) == 0 {
+		return
+	}
+	min := arr[0]
+	max := arr[0]
+	// 找出待排序的数组中最大和最小的元素
+	for i := 1; i < len(arr); i++ {
+		if arr[i] > max {
+			max = arr[i]
+		}
+		if arr[i] < min {
+			min = arr[i]
+		}
+	}
+
+	bias := 0 - min
+	bucket := make([]int, max-min+1)
+
+	for i := 0; i < len(arr); i++ {
+		bucket[arr[i]+bias]++
+	}
+
+	for index, i := 0, 0; index < len(arr); {
+		if bucket[i] != 0 {
+			arr[index] = i - bias
+			bucket[i]--
+			index++
+		} else {
+			i++
+		}
+	}
 }
 
 func Bucket(arr []int) {
-	//minValue := arr[0]
-	//maxValue := arr[0]
-	//for i := 1; i < len(arr); i++ {
-	//	if arr[i] < minValue {
-	//		minValue = arr[i] // 输入数据的最小值
-	//	} else if arr[i] > maxValue {
-	//		maxValue = arr[i] // 输入数据的最大值
-	//	}
-	//}
-	//
-	//// 桶的初始化
-	//const DEFAULT_BUCKET_SIZE = 5 // 设置桶的默认数量为5
-	//bucketSize := DEFAULT_BUCKET_SIZE
-	//bucketCount := (maxValue-minValue)/bucketSize + 1
-	//buckets := make([][]int, bucketCount)
-
+	if len(arr) == 0 {
+		return
+	}
+	// 设置桶的默认数量为5
+	bucket(arr, 5)
 }
 
-func Radix() {
-	//mod := 10
-	//dev := 1
+func bucket(arr []int, size int) {
+	min := arr[0]
+	max := arr[0]
+
+	for i := 1; i < len(arr); i++ {
+		if arr[i] > max {
+			max = arr[i]
+		}
+		if arr[i] < min {
+			min = arr[i]
+		}
+	}
+
+	counts := (max-min)/size + 1
+	buckets := make([][]int, counts)
+
+	for i := 0; i < len(arr); i++ {
+		index := (arr[i] - min) / size
+		buckets[index] = append(buckets[index], arr[i])
+	}
+
+	index := 0
+	for i := 0; i < len(buckets); i++ {
+		// 对每个桶进行排序，使用其他排序方法
+		Insertion(buckets[i])
+		for j := 0; j < len(buckets[i]); j++ {
+			arr[index] = buckets[i][j]
+			index++
+		}
+	}
+}
+
+func Radix(arr []int) {
+	if len(arr) == 0 {
+		return
+	}
+	// 取得数组中的最大数，并取得位数
+	max := arr[0]
+	for i := 1; i < len(arr); i++ {
+		if arr[i] > max {
+			max = arr[i]
+		}
+	}
+	digit := 0
+	for max != 0 {
+		max /= 10
+		digit++
+	}
+	radix(arr, digit)
+}
+
+func radix(arr []int, digit int) {
+	mod := 10
+	dev := 1
+
+	radix := make([][]int, 10)
+
+	for i := 0; i < digit; i++ {
+		for j := 0; j < len(arr); j++ {
+			bucket := int((arr[j] % mod) / dev)
+			radix[bucket] = append(radix[bucket], arr[j])
+		}
+		index := 0
+		for j := 0; j < len(radix); j++ {
+			for k := 0; k < len(radix[j]); k++ {
+				arr[index] = radix[j][k]
+				index++
+			}
+			radix[j] = []int{}
+		}
+		mod *= 10
+		dev *= 10
+	}
 
 }
