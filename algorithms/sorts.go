@@ -121,6 +121,7 @@ func Quick(arr []int) {
 func quick(arr []int, start, end int) {
 	if start < end {
 		index := partition(arr, start, end)
+		fmt.Printf("快排分区结果：%v，基准index：%d \n", arr, index)
 		quick(arr, start, index-1)
 		quick(arr, index+1, end)
 	}
@@ -146,13 +147,13 @@ func partition(arr IntSlice, start, end int) int {
 
 func Heap(arr IntSlice) {
 	buildMaxHeap(arr)
+	fmt.Printf("构建最大堆：%v \n\n", arr)
 
 	length := arr.Len()
-
-	// 循环将堆首位（最大值）与末位交换，然后再重新调整最大堆
+	// 将最大堆首位调整到尾部
 	for i := length - 1; i > 0; i-- {
 		arr.Swap(0, i)
-		heapify(arr, 0, length-(length-i))
+		heapify(arr, 0, i)
 	}
 }
 
@@ -182,9 +183,11 @@ func heapify(arr IntSlice, i, length int) {
 
 	// 如果父节点不是最大值，则将父节点与最大值交换，并且递归调整与父节点交换的位置。
 	if largest != i {
+		fmt.Printf("父节点index：%d，不是最大值，进行堆调整！", i)
 		arr.Swap(i, largest)
 		heapify(arr, largest, length)
 	}
+	fmt.Printf("堆调整结果：%v，节点index：%d \n", arr, i)
 }
 
 func Counting(arr []int) {
@@ -209,7 +212,7 @@ func Counting(arr []int) {
 	for i := 0; i < len(arr); i++ {
 		bucket[arr[i]+bias]++
 	}
-
+	fmt.Printf("计数排序，构建桶结果：%v \n", bucket)
 	for index, i := 0, 0; index < len(arr); {
 		if bucket[i] != 0 {
 			arr[index] = i - bias
@@ -249,7 +252,7 @@ func bucket(arr []int, size int) {
 		index := (arr[i] - min) / size
 		buckets[index] = append(buckets[index], arr[i])
 	}
-
+	fmt.Printf("构建桶：%v \n\n", buckets)
 	index := 0
 	for i := 0; i < len(buckets); i++ {
 		// 对每个桶进行排序，使用其他排序方法
@@ -277,6 +280,7 @@ func Radix(arr []int) {
 		max /= 10
 		digit++
 	}
+	fmt.Printf("最大位数：%d \n", digit)
 	radix(arr, digit)
 }
 
@@ -291,6 +295,7 @@ func radix(arr []int, digit int) {
 			bucket := int((arr[j] % mod) / dev)
 			radix[bucket] = append(radix[bucket], arr[j])
 		}
+		fmt.Printf("位数：%d；基数数组：%v \n", i+1, radix)
 		index := 0
 		for j := 0; j < len(radix); j++ {
 			for k := 0; k < len(radix[j]); k++ {

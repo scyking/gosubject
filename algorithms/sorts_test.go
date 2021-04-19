@@ -69,7 +69,7 @@ func TestBucket(t *testing.T) {
 func TestRadix(t *testing.T) {
 	array := arrayRandom(30)
 	algorithms.Radix(array)
-	fmt.Printf("基数排序结果：%v \n", array)
+	fmt.Printf("基数排序结果：%v \n\n\n", array)
 
 	arr := []int{1, 2, 44, 56, 23, 99, 4, 101, 33}
 	algorithms.Radix(arr)
